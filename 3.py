@@ -10,11 +10,12 @@ input = example if len(sys.argv) > 1 and sys.argv[1] == "example" else input
 with open(input, "r") as file:
     data = file.read()
 
+orig = data
 # data = data.splitlines()
 
 
 reg_1 = r"mul\((\d{1,3}),(\d{1,3})\)"
-first = r".*?don't"
+first = r"^(.*?)don't"
 last = r"(?:.*)do((?!n't).*?)$"
 do_dont = r"do([^n].*?)don't"
 
@@ -35,8 +36,9 @@ if len(first_find) > 0:
     dos.append(first_find)
 if len(last_find) > 0:
     last_find = last_find[0]
-    data = data[: len(last_find)]
-    dos.append(last_find)
+    if "don't" not in last_find:
+        data = data[: -len(last_find)]
+        dos.append(last_find)
 
 
 dos.extend([d for d in re.findall(do_dont, data)])
@@ -48,8 +50,3 @@ for a, b in mults:
     sum_2 += int(a) * int(b)
 print(f"1: {sum_1}")
 print(f"2: {sum_2}")
-
-
-
-
-# print(sum)
